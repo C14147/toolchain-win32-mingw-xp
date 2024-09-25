@@ -23,7 +23,6 @@ export XEGE_COMMIT="a6231b0b9db8b0147f1a6065979c946b8cfa8109"
 
 export _BIT=""
 export _CLEAN=0
-export _ENABLE_SHARED=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --arch)
@@ -33,10 +32,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     --clean)
       _CLEAN=1
-      shift
-      ;;
-    --enable-shared)
-      _ENABLE_SHARED=1
       shift
       ;;
     *)

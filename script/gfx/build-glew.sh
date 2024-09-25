@@ -14,8 +14,3 @@ cmake -S . -B "$build_dir" -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE="MinSizeRel" 
 cmake --build "$build_dir" --parallel
 
 cp "$build_dir/lib/libglew32.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"
-
-[[ "$_ENABLE_SHARED" -eq 0 ]] && exit 0
-
-cp "$build_dir/bin/glew32.dll" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/bin/libglew32.dll"
-cp "$build_dir/lib/libglew32.dll.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"

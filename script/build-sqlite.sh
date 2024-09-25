@@ -15,12 +15,5 @@ mkdir -p "$build_dir"
   ar rcs libsqlite3.a sqlite3.o 
 
   cp "libsqlite3.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"
-
-  [[ "$_ENABLE_SHARED" -eq 0 ]] && exit 0
-
-  gcc -Os -DNDEBUG -fPIC -shared -o libsqlite3.dll -Wl,--out-implib,libsqlite3.dll.a "$sqlite_dir/sqlite3.c"
-
-  cp "libsqlite3.dll" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/bin"
-  cp "libsqlite3.dll.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"
   popd
 }

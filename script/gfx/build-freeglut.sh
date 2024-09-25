@@ -13,6 +13,6 @@ cmake --build "$build_dir" --parallel
 
 cp "$build_dir/lib/libfreeglut_static.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"
 
-# always install the shared library, as freeglut has different interface for static and shared
+# install the shared library, as freeglut has different interface for static and shared
 cp "$build_dir/bin/libfreeglut.dll" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/bin"
 cp "$build_dir/lib/libfreeglut.dll.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"

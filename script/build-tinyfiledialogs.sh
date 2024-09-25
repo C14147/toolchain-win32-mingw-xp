@@ -21,13 +21,5 @@ mkdir -p "$build_dir"
   ar rcs libtinyfiledialogs.a tinyfiledialogs.o tinyfd_moredialogs.o
 
   cp "libtinyfiledialogs.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"
-
-  [[ "$_ENABLE_SHARED" -eq 0 ]] && exit 0
-
-  gcc -Os -DNDEBUG -I"$tinyfiledialogs_dir" -fPIC -shared -o libtinyfiledialogs.dll -Wl,--out-implib,libtinyfiledialogs.dll.a "$tinyfiledialogs_dir/tinyfiledialogs.c" "$tinyfiledialogs_dir/more_dialogs/tinyfd_moredialogs.c" -lcomdlg32 -lole32
-
-  cp "libtinyfiledialogs.dll" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/bin"
-  cp "libtinyfiledialogs.dll.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"
-
   popd
 }
