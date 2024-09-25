@@ -8,7 +8,7 @@ cd "$raylib_dir"
 cp src/{raylib,raymath,rlgl}.h "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/include"
 
 build_dir="build"
-cmake -S . -B "$build_dir" -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE="MinSizeRel" -DCMAKE_C_COMPILER="gcc" -DOPENGL_VERSION="3.3" -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF
+cmake -S . -B "$build_dir" -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE="MinSizeRel" -DCMAKE_C_COMPILER="gcc" -DOPENGL_VERSION="2.1" -DBUILD_EXAMPLES=OFF -DBUILD_SHARED_LIBS=OFF
 cmake --build "$build_dir" --parallel
 
 cp "$build_dir/raylib/libraylib.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib"

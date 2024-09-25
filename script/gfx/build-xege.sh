@@ -11,20 +11,10 @@ if [[ ! -d "$xege_dir" ]]; then
   popd
 fi
 cd "$xege_dir"
-cp src/graphics.h "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/include"
-cp src/ege.h "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/include"
+cp -r include/{ege,ege.h,graphics.h} "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/include"
 
 build_dir="build"
 cmake -S . -B "$build_dir" -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE="MinSizeRel" -DCMAKE_CXX_COMPILER="g++"
 cmake --build "$build_dir" --parallel
 
-case "$_BIT" in
-  32)
-    cp "$build_dir/libgraphics.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib/libgraphics.a"
-    ;;
-  64)
-    cp "$build_dir/libgraphics64.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib/libgraphics.a"
-    ;;
-esac
-
-# shared library is not supported
+cp "$build_dir/libgraphics.a" "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/lib/libgraphics.a"

@@ -3,7 +3,7 @@
 set -euxo pipefail
 
 fmt_dir="$_BUILDDIR/$_FMT_DIR"
-[[ -d "$fmt_dir" ]] || unzip -d "$_BUILDDIR" "$_ASSETSDIR/$_FMT_ARCHIVE"
+[[ -d "$fmt_dir" ]] || tar -C "$_BUILDDIR" -xf "$_ASSETSDIR/$_FMT_ARCHIVE"
 cd "$fmt_dir"
 cp -r include/fmt "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/include"
 

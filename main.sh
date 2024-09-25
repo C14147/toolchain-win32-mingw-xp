@@ -3,23 +3,23 @@
 set -euxo pipefail
 
 export REV="0"
-export GCC_VERSION="11.4.0"
+export GCC_VERSION="11.5.0"
 export MINGW_RELEASE="rt_v9-rev0"
 
-export FMT_VERSION="10.2.1"
+export FMT_VERSION="11.0.2"
 export SQLITE_RELEASE_YEAR="2024"
-export SQLITE_VERSIONID="3450000"
+export SQLITE_VERSIONID="3460100"
 export MARIADBC_VERSION="2.3.7"  # 3.x requires Vista
 export TINYFILEDIALOGS_COMMIT="865c1c84bc824aa8fa5fd46f3a51a8c56fe237b4"
 
-export GLM_VERSION="0.9.9.8"
-export FREEGLUT_VERSION="3.4.0"
-export GLFW_VERSION="3.3.9"
+export GLM_VERSION="1.0.1"
+export FREEGLUT_VERSION="3.6.0"
+export GLFW_VERSION="3.4"
 export GLEW_VERSION="2.2.0"
-export RAYLIB_VERSION="4.5.0"
-export RAYGUI_VERSION="3.6"
+export RAYLIB_VERSION="5.0"
+export RAYGUI_VERSION="4.0"
 export RDRAWING_COMMIT="d032dfa84b48fc5b7da7c672fbface081b6930e4"
-export XEGE_COMMIT="a6231b0b9db8b0147f1a6065979c946b8cfa8109"
+export XEGE_COMMIT="v24.04"
 
 export _BIT=""
 export _CLEAN=0
@@ -63,8 +63,8 @@ export _MINGW_ARCHIVE="$_ARCH-$GCC_VERSION-release-posix-$_EH-$MINGW_RELEASE.7z"
 export _MINGW_URL="https://github.com/redpanda-cpp/mingw-builds/releases/download/$GCC_VERSION-$MINGW_RELEASE/$_MINGW_ARCHIVE"
 
 export _FMT_DIR="fmt-$FMT_VERSION"
-export _FMT_ARCHIVE="$_FMT_DIR.zip"
-_FMT_URL="https://github.com/fmtlib/fmt/releases/download/$FMT_VERSION/$_FMT_ARCHIVE"
+export _FMT_ARCHIVE="$_FMT_DIR.tar.gz"
+_FMT_URL="https://github.com/fmtlib/fmt/archive/refs/tags/$FMT_VERSION.tar.gz"
 
 export _SQLITE_DIR="sqlite-amalgamation-$SQLITE_VERSIONID"
 export _SQLITE_ARCHIVE="$_SQLITE_DIR.zip"
@@ -78,9 +78,9 @@ export _TINYFILEDIALOGS_DIR="tinyfiledialogs-$TINYFILEDIALOGS_COMMIT"
 export _TINYFILEDIALOGS_REPO="tinyfiledialogs.git"
 _TINYFILEDIALOGS_URL="https://git.code.sf.net/p/tinyfiledialogs/code"
 
-export _GLM_DIR="glm"
-export _GLM_ARCHIVE="glm-$GLM_VERSION.7z"
-_GLM_URL="https://github.com/g-truc/glm/releases/download/$GLM_VERSION/$_GLM_ARCHIVE"
+export _GLM_DIR="glm-$GLM_VERSION"
+export _GLM_ARCHIVE="$_GLM_DIR.tar.gz"
+_GLM_URL="https://github.com/g-truc/glm/archive/refs/tags/$GLM_VERSION.tar.gz"
 
 export _FREEGLUT_DIR="freeglut-$FREEGLUT_VERSION"
 export _FREEGLUT_ARCHIVE="$_FREEGLUT_DIR.tar.gz"
@@ -88,7 +88,7 @@ _FREEGLUT_URL="https://github.com/freeglut/freeglut/releases/download/v$FREEGLUT
 
 export _GLFW_DIR="glfw-$GLFW_VERSION"
 export _GLFW_ARCHIVE="$_GLFW_DIR.zip"
-_GLFW_URL="https://github.com/glfw/glfw/releases/download/$GLFW_VERSION/$_GLFW_ARCHIVE"
+_GLFW_URL="https://github.com/glfw/glfw/archive/refs/tags/$GLFW_VERSION.tar.gz"
 
 export _GLEW_DIR="glew-$GLEW_VERSION"
 export _GLEW_ARCHIVE="$_GLEW_DIR.tgz"
@@ -144,7 +144,7 @@ function download-assets() {
   {
     [[ -d "$_ASSETSDIR/$_XEGE_REPO" ]] || git clone --bare "$_XEGE_URL" "$_ASSETSDIR/$_XEGE_REPO"
     pushd "$_ASSETSDIR/$_XEGE_REPO"
-    git fetch --all
+    git fetch --all --tags
     popd
   }
 }

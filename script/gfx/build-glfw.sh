@@ -3,7 +3,7 @@
 set -euxo pipefail
 
 glfw_dir="$_BUILDDIR/$_GLFW_DIR"
-[[ -d "$glfw_dir" ]] || unzip -d "$_BUILDDIR" "$_ASSETSDIR/$_GLFW_ARCHIVE"
+[[ -d "$glfw_dir" ]] || tar -C "$_BUILDDIR" -xf "$_ASSETSDIR/$_GLFW_ARCHIVE"
 cd "$glfw_dir"
 cp -r include/GLFW "$_BUILDDIR/$_MINGW_DIR/$_TRIPLET/include"
 
