@@ -4,7 +4,7 @@ set -euxo pipefail
 
 export REV="0"
 export GCC_VERSION="15.1.0"
-export MINGW_RELEASE="rt_v12-rev0"
+export MINGW_RELEASE="msvcrt-rt_v12-rev0"
 
 export FMT_VERSION="11.0.2"
 export SQLITE_RELEASE_YEAR="2024"
