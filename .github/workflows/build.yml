@@ -73,7 +73,7 @@ jobs:
         
         # 复制动态库和相关文件
         copy raylib/src/raylib.dll "raylib_$arch/bin"
-        copy raylib/src/raylib.dll.def "raylib_$arch/lib"
+        #copy raylib/src/raylib.dll.def "raylib_$arch/lib"
         copy raylib/src/raylib.lib "raylib_$arch/lib"
         
         # 创建版本文件
