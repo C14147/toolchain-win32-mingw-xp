@@ -54,6 +54,7 @@ jobs:
         make PLATFORM=PLATFORM_DESKTOP CC=gcc RAYLIB_LIBTYPE=STATIC -j4
         # 编译动态库
         make PLATFORM=PLATFORM_DESKTOP CC=gcc RAYLIB_LIBTYPE=SHARED -j4
+        Rename-Item -Path "raylib/src/libraylibdll.a" -NewName "raylib.a"
 
     - name: Create package
       run: |
