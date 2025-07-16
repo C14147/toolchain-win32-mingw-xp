@@ -59,12 +59,17 @@ jobs:
         Invoke-WebRequest -Uri $sqliteUrl -OutFile "sqlite.zip"
         7z x sqlite.zip -o"sqlite-src"
         
+        # 修复：进入解压后的实际目录
         cd sqlite-src
+        $sqliteDir = Get-ChildItem -Directory | Select-Object -First 1
+        if ($sqliteDir) {
+            cd $sqliteDir.Name
+        }
         
-        # 修复链接器选项格式 - 使用单引号包裹整个链接器参数
-        gcc -c -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE sqlite3.c -o sqlite3.o
-        ar rcs libsqlite3.a sqlite3.o
-        gcc -shared -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE sqlite3.c -o sqlite3.dll '-Wl,--out-implib,libsqlite3.dll.a'
+        # 修复：使用完整路径确保找到文件
+        gcc -c -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE .\sqlite3.c -o sqlite3.o
+        & "$env:MINGW_DIR\bin\ar" rcs libsqlite3.a sqlite3.o
+        gcc -shared -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE .\sqlite3.c -o sqlite3.dll '-Wl,--out-implib,libsqlite3.dll.a'
 
     - name: Build cJSON
       run: |
@@ -100,11 +105,16 @@ jobs:
         copy raylib/src/raylib.lib "raylib_$arch/lib"
         
         # SQLite
-        copy sqlite-src/sqlite3.h "raylib_$arch/include"
-        copy sqlite-src/sqlite3ext.h "raylib_$arch/include"
-        copy sqlite-src/libsqlite3.a "raylib_$arch/lib"
-        copy sqlite-src/sqlite3.dll "raylib_$arch/bin"
-        copy sqlite-src/libsqlite3.dll.a "raylib_$arch/lib"
+        # 修复：复制正确的SQLite文件
+        $sqliteIncludePath = "sqlite-src"
+        if (Test-Path "sqlite-src\sqlite-amalgamation-*") {
+            $sqliteIncludePath = (Get-ChildItem "sqlite-src\sqlite-amalgamation-*" -Directory | Select-Object -First 1).FullName
+        }
+        copy "$sqliteIncludePath\sqlite3.h" "raylib_$arch/include"
+        copy "$sqliteIncludePath\sqlite3ext.h" "raylib_$arch/include"
+        copy "$sqliteIncludePath\libsqlite3.a" "raylib_$arch/lib"
+        copy "$sqliteIncludePath\sqlite3.dll" "raylib_$arch/bin"
+        copy "$sqliteIncludePath\libsqlite3.dll.a" "raylib_$arch/lib"
         
         # cJSON
         copy cJSON/cJSON.h "raylib_$arch/include"
