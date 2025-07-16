@@ -29,8 +29,8 @@ jobs:
         Invoke-WebRequest -Uri $mingwUrl -OutFile "mingw.7z"
         echo "MINGW_DIR=$mingwDir" >> $env:GITHUB_ENV
 
-    - name: Install 7-Zip
-      uses: burnett01/install-7zip-action@v1
+    - name: Install 7-Zip with Chocolatey
+      run: choco install 7zip -y
 
     - name: Extract MinGW
       run: 7z x mingw.7z -o"$env:MINGW_DIR"
@@ -50,42 +50,34 @@ jobs:
     - name: Build Raylib
       run: |
         cd raylib/src
-        # 编译静态库和动态库
         make PLATFORM=PLATFORM_DESKTOP CC=gcc RAYLIB_LIBTYPE=STATIC -j4
         make PLATFORM=PLATFORM_DESKTOP CC=gcc RAYLIB_LIBTYPE=SHARED -j4
 
     - name: Build SQLite
       run: |
-        # 下载SQLite源码
-        $sqliteUrl = "https://sqlite.org/2025/sqlite-amalgamation-3500200.zip"
+        $sqliteUrl = "https://sqlite.org/2024/sqlite-amalgamation-3460000.zip"
         Invoke-WebRequest -Uri $sqliteUrl -OutFile "sqlite.zip"
         7z x sqlite.zip -o"sqlite-src"
         
-        # 编译静态库
         cd sqlite-src
         gcc -c -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE sqlite3.c -o sqlite3.o
         ar rcs libsqlite3.a sqlite3.o
-        
-        # 编译动态库
         gcc -shared -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE sqlite3.c -o sqlite3.dll -Wl,--out-implib,libsqlite3.dll.a
 
     - name: Build cJSON
       run: |
-        # 下载cJSON源码
-        git clone --depth 1 https://github.com/DaveGamble/cJSON.git
+        git clone --depth 1 --branch v1.7.17 https://github.com/DaveGamble/cJSON.git
         
-        # 编译静态库
         cd cJSON
         mkdir build
         cd build
-        cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CJSON_UTILS=On -DENABLE_CJSON_TEST=Off -DBUILD_SHARED_LIBS=Off ..
+        cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DENABLE_CJSON_UTILS=On -DENABLE_CJSON_TEST=Off -DBUILD_SHARED_LIBS=Off ..
         cmake --build . --config Release
         
-        # 编译动态库
         cd ..
         mkdir build_shared
         cd build_shared
-        cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_CJSON_UTILS=On -DENABLE_CJSON_TEST=Off -DBUILD_SHARED_LIBS=On ..
+        cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DENABLE_CJSON_UTILS=On -DENABLE_CJSON_TEST=Off -DBUILD_SHARED_LIBS=On ..
         cmake --build . --config Release
 
     - name: Create package
@@ -96,7 +88,7 @@ jobs:
         mkdir "raylib_$arch/lib"
         mkdir "raylib_$arch/bin"
         
-        # 复制Raylib文件
+        # Raylib
         copy raylib/src/raylib.h "raylib_$arch/include"
         copy raylib/src/raymath.h "raylib_$arch/include"
         copy raylib/src/rlgl.h "raylib_$arch/include"
@@ -105,32 +97,30 @@ jobs:
         copy raylib/src/raylib.dll.def "raylib_$arch/lib"
         copy raylib/src/raylib.lib "raylib_$arch/lib"
         
-        # 复制SQLite文件
+        # SQLite
         copy sqlite-src/sqlite3.h "raylib_$arch/include"
         copy sqlite-src/sqlite3ext.h "raylib_$arch/include"
         copy sqlite-src/libsqlite3.a "raylib_$arch/lib"
         copy sqlite-src/sqlite3.dll "raylib_$arch/bin"
         copy sqlite-src/libsqlite3.dll.a "raylib_$arch/lib"
         
-        # 复制cJSON文件
+        # cJSON
         copy cJSON/cJSON.h "raylib_$arch/include"
         copy cJSON/build/libcjson.a "raylib_$arch/lib"
         copy cJSON/build_shared/libcjson.dll "raylib_$arch/bin"
         copy cJSON/build_shared/libcjson.dll.a "raylib_$arch/lib"
         
-        # 创建版本文件
+        # Version info
         echo "Raylib 5.0 built with MinGW-w64 GCC 15.1.0 ($arch)" > "raylib_$arch/version.txt"
         echo "SQLite version: 3.46.0" >> "raylib_$arch/version.txt"
         echo "cJSON version: 1.7.17" >> "raylib_$arch/version.txt"
         echo "Build date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" >> "raylib_$arch/version.txt"
 
     - name: Zip package
-      uses: montudor/action-zip@v1
-      with:
-        args: zip -qq -r "raylib_full_${{ matrix.arch }}.zip" "raylib_${{ matrix.arch }}"
+      run: 7z a -tzip "raylib_full_${{ matrix.arch }}.zip" "raylib_${{ matrix.arch }}"
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: raylib-full-${{ matrix.arch }}
         path: raylib_full_${{ matrix.arch }}.zip
@@ -140,37 +130,16 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         path: artifacts
 
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref }}
-        release_name: "Raylib MinGW-w64 Full Bundle"
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/raylib-full-i686/raylib_full_i686.zip
-        asset_name: raylib_full_i686.zip
-        asset_content_type: application/zip
-
-    - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/raylib-full-x86_64/raylib_full_x86_64.zip
-        asset_name: raylib_full_x86_64.zip
-        asset_content_type: application/zip
+        name: "Raylib MinGW-w64 Full Bundle"
+        files: |
+          artifacts/raylib-full-i686/raylib_full_i686.zip
+          artifacts/raylib-full-x86_64/raylib_full_x86_64.zip
