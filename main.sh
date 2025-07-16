@@ -4,7 +4,7 @@ set -euxo pipefail
 
 export REV="0"
 export GCC_VERSION="15.1.0"
-export MINGW_RELEASE="msvcrt-rt_v12-rev0"
+export MINGW_RELEASE="rt_v12-rev0"
 
 export FMT_VERSION="11.0.2"
 export SQLITE_RELEASE_YEAR="2024"
@@ -59,7 +59,7 @@ esac
 export _TRIPLET="$_ARCH-w64-mingw32"
 
 export _MINGW_DIR="mingw$_BIT"
-export _MINGW_ARCHIVE="$_ARCH-$GCC_VERSION-release-posix-$_EH-$MINGW_RELEASE.7z"
+export _MINGW_ARCHIVE="$_ARCH-$GCC_VERSION-release-posix-$_EH-msvcrt-$MINGW_RELEASE.7z"
 export _MINGW_URL="https://github.com/niXman/mingw-builds-binaries/releases/download/$GCC_VERSION-$MINGW_RELEASE/$_MINGW_ARCHIVE"
 
 export _FMT_DIR="fmt-$FMT_VERSION"
