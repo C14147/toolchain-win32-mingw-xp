@@ -65,27 +65,21 @@ jobs:
         mkdir "raylib_$arch/bin"
         
         # 复制头文件
-        copy raylib/src/raylib.h "raylib_$arch/include"
-        copy raylib/src/raymath.h "raylib_$arch/include"
-        copy raylib/src/rlgl.h "raylib_$arch/include"
+        copy raylib/src/raylib.h "$env:MINGW_DIR/x86_64-w64-mingw32/include/"
+        copy raylib/src/raymath.h "$env:MINGW_DIR/x86_64-w64-mingw32/include/"
+        copy raylib/src/rlgl.h "$env:MINGW_DIR/x86_64-w64-mingw32/include/"
         
         # 复制静态库
-        copy raylib/src/libraylib.a "raylib_$arch/lib"
+        copy raylib/src/libraylib.a "$env:MINGW_DIR/x86_64-w64-mingw32/lib/"
         
         # 复制动态库和相关文件
         ls raylib/src/
-        copy raylib/src/raylib.dll "raylib_$arch/bin"
-        #copy raylib/src/raylib.dll.def "raylib_$arch/lib"
-        copy raylib/src/raylib.a "raylib_$arch/lib"
-        
-        # 创建版本文件
-        echo "Raylib 5.0 built with MinGW-w64 GCC 15.1.0 ($arch)" > "raylib_$arch/version.txt"
-        echo "Build date: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" >> "raylib_$arch/version.txt"
+        copy raylib/src/raylib.dll "$env:MINGW_DIR/x86_64-w64-mingw32/lib/"
+        #copy raylib/src/raylib.dll.def "$env:MINGW_DIR/x86_64-w64-mingw32/lib/"
+        copy raylib/src/raylib.a "$env:MINGW_DIR/x86_64-w64-mingw32/lib/"
 
     - name: Zip package
-      uses: montudor/action-zip@v1
-      with:
-        args: zip -qq -r "raylib_mingw_${{ matrix.arch }}.zip" "raylib_${{ matrix.arch }}"
+      run: 7z a "raylib_mingw_${{ matrix.arch }}.zip" "$env:MINGW_DIR"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
