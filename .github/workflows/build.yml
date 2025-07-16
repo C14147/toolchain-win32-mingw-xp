@@ -75,7 +75,7 @@ jobs:
         ls raylib/src/
         copy raylib/src/raylib.dll "raylib_$arch/bin"
         #copy raylib/src/raylib.dll.def "raylib_$arch/lib"
-        copy raylib/src/raylib.lib "raylib_$arch/lib"
+        copy raylib/src/raylib.a "raylib_$arch/lib"
         
         # 创建版本文件
         echo "Raylib 5.0 built with MinGW-w64 GCC 15.1.0 ($arch)" > "raylib_$arch/version.txt"
