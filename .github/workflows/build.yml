@@ -59,16 +59,19 @@ jobs:
         Invoke-WebRequest -Uri $sqliteUrl -OutFile "sqlite.zip"
         7z x sqlite.zip -o"sqlite-src"
         
-        # 修复：进入解压后的实际目录
+        # 进入解压后的实际目录
         cd sqlite-src
         $sqliteDir = Get-ChildItem -Directory | Select-Object -First 1
         if ($sqliteDir) {
             cd $sqliteDir.Name
         }
         
-        # 修复：使用完整路径确保找到文件
+        # 修复：使用直接命令调用避免模块加载问题
         gcc -c -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE .\sqlite3.c -o sqlite3.o
-        & "$env:MINGW_DIR\bin\ar" rcs libsqlite3.a sqlite3.o
+        
+        # 修复：使用完整的可执行路径调用ar
+        & "$pwd\$env:MINGW_DIR\bin\ar.exe" rcs libsqlite3.a sqlite3.o
+        
         gcc -shared -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE .\sqlite3.c -o sqlite3.dll '-Wl,--out-implib,libsqlite3.dll.a'
 
     - name: Build cJSON
@@ -104,11 +107,12 @@ jobs:
         copy raylib/src/raylib.dll.def "raylib_$arch/lib"
         copy raylib/src/raylib.lib "raylib_$arch/lib"
         
-        # SQLite
-        # 修复：复制正确的SQLite文件
+        # SQLite - 修复路径处理
         $sqliteIncludePath = "sqlite-src"
         if (Test-Path "sqlite-src\sqlite-amalgamation-*") {
             $sqliteIncludePath = (Get-ChildItem "sqlite-src\sqlite-amalgamation-*" -Directory | Select-Object -First 1).FullName
+        } elseif (Test-Path "sqlite-src\*") {
+            $sqliteIncludePath = (Get-ChildItem "sqlite-src\*" -Directory | Select-Object -First 1).FullName
         }
         copy "$sqliteIncludePath\sqlite3.h" "raylib_$arch/include"
         copy "$sqliteIncludePath\sqlite3ext.h" "raylib_$arch/include"
