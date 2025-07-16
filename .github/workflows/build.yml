@@ -86,7 +86,7 @@ jobs:
         args: zip -qq -r "raylib_mingw_${{ matrix.arch }}.zip" "raylib_${{ matrix.arch }}"
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: raylib-mingw-${{ matrix.arch }}
         path: raylib_mingw_${{ matrix.arch }}.zip
