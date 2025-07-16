@@ -60,9 +60,11 @@ jobs:
         7z x sqlite.zip -o"sqlite-src"
         
         cd sqlite-src
+        
+        # 修复链接器选项格式 - 使用单引号包裹整个链接器参数
         gcc -c -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE sqlite3.c -o sqlite3.o
         ar rcs libsqlite3.a sqlite3.o
-        gcc -shared -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE sqlite3.c -o sqlite3.dll -Wl,--out-implib,libsqlite3.dll.a
+        gcc -shared -O2 -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_RTREE sqlite3.c -o sqlite3.dll '-Wl,--out-implib,libsqlite3.dll.a'
 
     - name: Build cJSON
       run: |
@@ -135,7 +137,6 @@ jobs:
         path: artifacts
 
     - name: Create Release
-      id: create_release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref }}
