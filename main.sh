@@ -60,7 +60,7 @@ export _TRIPLET="$_ARCH-w64-mingw32"
 
 export _MINGW_DIR="mingw$_BIT"
 export _MINGW_ARCHIVE="$_ARCH-$GCC_VERSION-release-posix-$_EH-$MINGW_RELEASE.7z"
-export _MINGW_URL="https://github.com/redpanda-cpp/mingw-builds/releases/download/$GCC_VERSION-$MINGW_RELEASE/$_MINGW_ARCHIVE"
+export _MINGW_URL="https://github.com/niXman/mingw-builds-binaries/releases/download/$GCC_VERSION-$MINGW_RELEASE/$_MINGW_ARCHIVE"
 
 export _FMT_DIR="fmt-$FMT_VERSION"
 export _FMT_ARCHIVE="$_FMT_DIR.tar.gz"
